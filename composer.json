@@ -1,17 +1,17 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "ivanomatteo/laravel-data-import-export",
+    "description": "utility for data import/export from/to csv and excel files",
     "keywords": [
-        ":vendor_name",
+        "ivanomatteo",
         "laravel",
-        ":package_slug"
+        "laravel-data-import-export"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/ivanomatteo/laravel-data-import-export",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "Ivano Matteo",
+            "email": "ivanomatteo@gmail.com",
             "role": "Developer"
         }
     ],
@@ -34,13 +34,13 @@
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories"
+            "IvanoMatteo\\LaravelDataImportExport\\": "src",
+            "IvanoMatteo\\LaravelDataImportExport\\Database\\Factories\\": "database/factories"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests"
+            "IvanoMatteo\\LaravelDataImportExport\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -49,15 +49,19 @@
         "test-coverage": "vendor/bin/pest coverage"
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
+                "IvanoMatteo\\LaravelDataImportExport\\LaravelDataImportExportServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
+                "LaravelDataImportExport": "IvanoMatteo\\LaravelDataImportExport\\Facades\\LaravelDataImportExport"
             }
         }
     },

@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace IvanoMatteo\LaravelDataImportExport\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class LaravelDataImportExportCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'laravel-data-import-export';
 
     public $description = 'My command';
 

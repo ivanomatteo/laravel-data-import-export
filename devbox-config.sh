@@ -1,0 +1,6 @@
+#!/bin/bash
+
+
+DEFAULT_NODE_VERSION="16"
+DEFAULT_PHP_VERSION="8.0"
+
