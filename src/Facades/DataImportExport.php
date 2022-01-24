@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @see \IvanoMatteo\LaravelDataImportExport\LaravelDataImportExport
  */
-class LaravelDataImportExport extends Facade
+class DataImportExport extends Facade
 {
     protected static function getFacadeAccessor()
     {

@@ -2,69 +2,71 @@
 
 namespace IvanoMatteo\LaravelDataImportExport;
 
+use Closure;
+use Exception;
 use Generator;
+use Illuminate\Database\ConnectionInterface;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Iterator;
 
-/**
- * @property string $table
- * @property \Illuminate\Database\ConnectionInterface $connection
- * @property array $buff
- * @property int $buffSize
- *
- * @property bool $truncate
- *
- * @property callable|null $importLogic
- *
- * @property int $counter
- *
- */
+
 class BufferedImporter
 {
-    private $table;
-    private $connection;
+    private ConnectionInterface $connection;
 
-    private $buff;
-    private $buffSize = 100;
-    private $truncate = false;
+    private array $buff = [];
+    private int $buffSize = 100;
+    private Collection $truncate;
 
-    private $importLogic = null;
+    private ?Closure $importLogic = null;
 
-    private $counter = 0;
+    private int $counter = 0;
 
-    public function __construct($table = null, $connection = null)
+    public function __construct(string $connectionName = null)
     {
-        $this->table = $table;
-        $this->connection = DB::connection($connection);
+        $this->truncate = new Collection();
+        $this->connection = DB::connection($connectionName);
     }
 
 
-    public function bufferSize($buffSize)
+    public function bufferSize(int $buffSize): static
     {
         $this->buffSize = $buffSize;
         return $this;
     }
 
 
-    public function truncate($b = true)
+    public function truncate(array|string $table): static
     {
-        $this->truncate = $b;
+        $this->truncate = $this->truncate->merge(collect($table));
         return $this;
     }
 
-    public function importLogic(callable $importLogic)
+
+    public function importLogic(callable $importLogic): static
     {
-        $this->importLogic = $importLogic;
+        $this->importLogic = Closure::fromCallable($importLogic);
         return $this;
     }
 
-    public function run(Iterator $iterator)
+    public function importLogicInsert(string $table): static
     {
+        $this->importLogic = fn ($buff) => $this->connection->table($table)->insert($buff);
+        return $this;
+    }
+
+    public function run(Iterator $iterator): void
+    {
+
+        if(empty($this->importLogic)){
+            throw new Exception('Import logic not defined');
+        }
+
         $this->connection->transaction(function () use ($iterator) {
-            if ($this->truncate) {
-                $this->connection->table($this->table)->truncate();
-            }
+
+            $this->truncateTables();
 
             $this->buff = [];
             $this->counter = 0;
@@ -76,7 +78,7 @@ class BufferedImporter
         });
     }
 
-    private function processRow($row)
+    private function processRow($row): void
     {
         $this->buff[] = $row;
 
@@ -85,15 +87,16 @@ class BufferedImporter
         }
     }
 
-    private function flushBuffer()
+    private function truncateTables(): void
+    {
+        if ($this->truncate) {
+            $this->truncate->each(fn ($table) => $this->connection->table($table)->truncate());
+        }
+    }
+    private function flushBuffer(): void
     {
         if (!empty($this->buff)) {
-            if ($this->importLogic) {
-                ($this->importLogic)($this->table, $this->buff);
-            } else {
-                $this->connection->table($this->table)->insert($this->buff);
-            }
-
+            ($this->importLogic)($this->buff);
             $this->buff = [];
         }
     }
