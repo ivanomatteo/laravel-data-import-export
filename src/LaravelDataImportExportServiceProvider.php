@@ -2,10 +2,10 @@
 
 namespace IvanoMatteo\LaravelDataImportExport;
 
-use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
 use IvanoMatteo\LaravelDataImportExport\Commands\LaravelDataImportExportCommand;
 use IvanoMatteo\LaravelDataMigrations\Pkg;
+use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class LaravelDataImportExportServiceProvider extends PackageServiceProvider
 {

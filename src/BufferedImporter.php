@@ -4,13 +4,10 @@ namespace IvanoMatteo\LaravelDataImportExport;
 
 use Closure;
 use Exception;
-use Generator;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Iterator;
-
 
 class BufferedImporter
 {
@@ -30,17 +27,17 @@ class BufferedImporter
         $this->connection = DB::connection($connectionName);
     }
 
-
     public function bufferSize(int $buffSize): static
     {
         $this->buffSize = $buffSize;
+
         return $this;
     }
-
 
     public function truncate(array|string $table): static
     {
         $this->truncate = $this->truncate->merge(collect($table));
+
         return $this;
     }
 
@@ -48,24 +45,24 @@ class BufferedImporter
     public function importUsing(callable $importLogic): static
     {
         $this->importLogic = Closure::fromCallable($importLogic);
+
         return $this;
     }
 
     public function importUsingInsert(string $table): static
     {
         $this->importLogic = fn ($buff) => $this->connection->table($table)->insert($buff);
+
         return $this;
     }
 
     public function run(Iterator $iterator): void
     {
-
         if (empty($this->importLogic)) {
             throw new Exception('Import logic not defined');
         }
 
         $this->connection->transaction(function () use ($iterator) {
-
             $this->truncateTables();
 
             $this->buff = [];
@@ -95,9 +92,10 @@ class BufferedImporter
             );
         }
     }
+
     private function flushBuffer(): void
     {
-        if (!empty($this->buff)) {
+        if (! empty($this->buff)) {
             ($this->importLogic)($this->buff);
             $this->buff = [];
         }
