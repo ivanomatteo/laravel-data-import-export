@@ -2,9 +2,11 @@
 
 namespace IvanoMatteo\LaravelDataImportExport;
 
+use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Iterator;
@@ -34,19 +36,32 @@ class DataImportExport
         return $this;
     }
 
+    public function truncate(string|array|Collection $tables,string $connection = null): void
+    {
+        $connection = DB::connection($connection);
+        collect($tables)->each(
+            fn ($t) => $connection->table($t)->truncate()
+        );
+    }
 
-    public function importTable(string $file, string $table = null, bool $truncate = false, string $connection = null)
+
+    public function importTable(string $file, string|Closure $tableOrClosure = null, string $connection = null)
     {
         ['filename' => $filename] = pathinfo($file);
 
-        if (!$table) {
-            $table = Str::snake($filename);
+        if (!$tableOrClosure) {
+            $tableOrClosure = Str::snake($filename);
         }
 
-        (new BufferedImporter($connection))
-            ->importUsingInsert($table)
-            ->truncate($truncate ? $table : [])
-            ->run($this->makeIterator($file));
+        $importer = (new BufferedImporter($connection));
+
+        if ($tableOrClosure instanceof Closure) {
+            $importer->importUsing($tableOrClosure);
+        } else {
+            $importer->importUsingInsert($tableOrClosure);
+        }
+
+        $importer->run($this->makeIterator($file));
     }
 
     public function exportTable(
