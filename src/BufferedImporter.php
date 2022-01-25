@@ -45,13 +45,13 @@ class BufferedImporter
     }
 
 
-    public function importLogic(callable $importLogic): static
+    public function importUsing(callable $importLogic): static
     {
         $this->importLogic = Closure::fromCallable($importLogic);
         return $this;
     }
 
-    public function importLogicInsert(string $table): static
+    public function importUsingInsert(string $table): static
     {
         $this->importLogic = fn ($buff) => $this->connection->table($table)->insert($buff);
         return $this;
@@ -60,7 +60,7 @@ class BufferedImporter
     public function run(Iterator $iterator): void
     {
 
-        if(empty($this->importLogic)){
+        if (empty($this->importLogic)) {
             throw new Exception('Import logic not defined');
         }
 
@@ -90,7 +90,9 @@ class BufferedImporter
     private function truncateTables(): void
     {
         if ($this->truncate) {
-            $this->truncate->each(fn ($table) => $this->connection->table($table)->truncate());
+            $this->truncate->each(
+                fn ($table) => $this->connection->table($table)->truncate()
+            );
         }
     }
     private function flushBuffer(): void

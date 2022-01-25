@@ -5,7 +5,7 @@ namespace IvanoMatteo\LaravelDataImportExport\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \IvanoMatteo\LaravelDataImportExport\LaravelDataImportExport
+ * @see \IvanoMatteo\LaravelDataImportExport\DataImportExport
  */
 class DataImportExport extends Facade
 {

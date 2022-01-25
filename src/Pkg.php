@@ -12,7 +12,7 @@ class Pkg
         return 'laravel-data-import-export';
     }
 
-    public static function configGet(string $key, mixed $default): mixed
+    public static function configGet(string $key, mixed $default = null): mixed
     {
         return Config::get(static::getName() . ".$key", $default);
     }
