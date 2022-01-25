@@ -3,8 +3,8 @@
 namespace IvanoMatteo\LaravelDataImportExport;
 
 use Closure;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
@@ -37,7 +37,7 @@ class DataImportExport
         return $this;
     }
 
-    public function truncate(string|array|Collection $tables,string $connection = null): void
+    public function truncate(string|array|Collection $tables, string $connection = null): void
     {
         $connection = DB::connection($connection);
         collect($tables)->each(
@@ -45,12 +45,11 @@ class DataImportExport
         );
     }
 
-
     public function importTable(string $file, string|Closure $tableOrClosure = null, string $connection = null)
     {
         ['filename' => $filename] = pathinfo($file);
 
-        if (!$tableOrClosure) {
+        if (! $tableOrClosure) {
             $tableOrClosure = Str::snake($filename);
         }
 
