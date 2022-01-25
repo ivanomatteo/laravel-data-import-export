@@ -41,7 +41,6 @@ class BufferedImporter
         return $this;
     }
 
-
     public function importUsing(callable $importLogic): static
     {
         $this->importLogic = Closure::fromCallable($importLogic);

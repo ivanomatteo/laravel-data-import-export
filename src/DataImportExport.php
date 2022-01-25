@@ -2,8 +2,8 @@
 
 namespace IvanoMatteo\LaravelDataImportExport;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -34,12 +34,11 @@ class DataImportExport
         return $this;
     }
 
-
     public function importTable(string $file, string $table = null, bool $truncate = false, string $connection = null)
     {
         ['filename' => $filename] = pathinfo($file);
 
-        if (!$table) {
+        if (! $table) {
             $table = Str::snake($filename);
         }
 
@@ -55,13 +54,13 @@ class DataImportExport
     ) {
         ['filename' => $filename] = pathinfo($file);
 
-        if (!$table) {
+        if (! $table) {
             $table = Str::snake($filename);
         }
 
         if ($table instanceof Model) {
             $query = $table->query()->toBase();
-        } else if ($table instanceof EloquentBuilder || $table instanceof QueryBuilder) {
+        } elseif ($table instanceof EloquentBuilder || $table instanceof QueryBuilder) {
             $query = $table;
         } else {
             $query = DB::table($table);
@@ -76,8 +75,6 @@ class DataImportExport
                 $this->csvEscape,
             )->write($query->cursor(), $headers);
     }
-
-
 
     private function makeIterator($file): Iterator
     {
